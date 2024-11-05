@@ -1,0 +1,54 @@
+/* EDA on Student Performance dataset */
+
+
+import pandas as pd
+df = pd.read_csv('StudentPerformanceFactors.csv')
+df.isnull().sum()
+df.describe()
+df.info()
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Histogram
+df.hist(figsize=(10, 8))
+plt.show()
+
+# Boxplot for outliers
+sns.boxplot(data=df)
+plt.show()
+
+#Scatter plot
+plt.figure(figsize=(10, 6))
+sns.scatterplot(x='Hours_Studied', y='Exam_Score', data=df)
+plt.title('Study Hours vs Grades')
+plt.xlabel('Study Hours')
+plt.ylabel('Grades')
+plt.show()
+
+# Correlation matrix
+corr_matrix = df[['Hours_Studied', 'Attendance', 'Exam_Score']].corr()
+
+# Heatmap of the correlation matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', linewidths=0.5)
+plt.title('Correlation Heatmap of Student Performance')
+plt.show()
+
+from scipy import stats
+import numpy as np
+
+# Calculate Z-scores
+z_scores = stats.zscore(df[['Hours_Studied', 'Attendance', 'Exam_Score']])
+abs_z_scores = np.abs(z_scores)
+
+# Define a threshold
+threshold = 3
+outliers = (abs_z_scores > threshold)
+
+# Find outliers in each column
+outlier_indices = np.where(outliers)[0]
+outlier_data = df.iloc[outlier_indices]
+
+print("Outliers detected based on Z-score:")
+print(outlier_data)
